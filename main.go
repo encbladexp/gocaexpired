@@ -20,8 +20,8 @@ const (
 
 type Certificate struct {
 	Status   string
-	Expired  time.Time
-	Revoked  time.Time
+	Expired  *time.Time
+	Revoked  *time.Time
 	Serial   string
 	Filename string
 	CN       string
@@ -45,14 +45,14 @@ func (c *Certificates) process_line(line []string) {
 	if err != nil {
 		panic(err)
 	}
-	cert.Expired = *expired
+	cert.Expired = expired
 	revoked_string := line[CERT_REVOKED]
 	if revoked_string != "" {
 		revoked, err := c.parse_time(line[CERT_REVOKED])
 		if err != nil {
 			panic(err)
 		}
-		cert.Revoked = *revoked
+		cert.Revoked = revoked
 	}
 	cert.Status = line[CERT_STATUS]
 	cert.Filename = line[CERT_FILENAME]

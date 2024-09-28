@@ -24,7 +24,7 @@ type Certificate struct {
 	Expired  *time.Time
 	Revoked  *time.Time
 	Serial   string
-	Filename string
+	Filename *string
 	CN       string
 }
 
@@ -60,7 +60,10 @@ func (c *Certificates) process_line(line []string) {
 		cert.Revoked = revoked
 	}
 	cert.Status = line[CERT_STATUS]
-	cert.Filename = line[CERT_FILENAME]
+	filename := &line[CERT_FILENAME]
+	if *filename != "unknown" {
+		cert.Filename = &line[CERT_FILENAME]
+	}
 	cert.Serial = line[CERT_SERIAL]
 	switch cert.Status {
 	case "V":

@@ -25,7 +25,7 @@ type Certificate struct {
 	Revoked  *time.Time
 	Serial   string
 	Filename *string
-	CN       string
+	CN       *string
 }
 
 type Certificates struct {
@@ -65,6 +65,7 @@ func (c *Certificates) process_line(line []string) {
 		cert.Filename = &line[CERT_FILENAME]
 	}
 	cert.Serial = line[CERT_SERIAL]
+	cert.CN = &line[CERT_CN]
 	switch cert.Status {
 	case "V":
 		c.Certificates = append(c.Certificates, cert)

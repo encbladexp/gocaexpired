@@ -8,7 +8,8 @@ import (
 )
 
 const FILENAME = "index.txt"
-const TIMEFORMAT = "060102150405Z"
+const TIMEFORMAT_SHORT = "060102150405Z"
+const TIMEFORMAT_LONG = "20060102150405Z"
 const (
 	CERT_STATUS = iota
 	CERT_EXPIRED
@@ -32,7 +33,11 @@ type Certificates struct {
 }
 
 func (c Certificates) parse_time(timestring string) (*time.Time, error) {
-	date, err := time.Parse(TIMEFORMAT, timestring) // TODO: Short and Long Timeformat
+	date, err := time.Parse(TIMEFORMAT_SHORT, timestring)
+	if err == nil {
+		return &date, nil
+	}
+	date, err = time.Parse(TIMEFORMAT_LONG, timestring)
 	if err != nil {
 		return nil, err
 	}

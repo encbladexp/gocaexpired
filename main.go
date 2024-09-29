@@ -19,6 +19,10 @@ const (
 	CERT_CN
 )
 
+var TIME_90D = time.Now().Add(90 * 24 * time.Hour)
+var TIME_30D = time.Now().Add(30 * 24 * time.Hour)
+var TIME_NOW = time.Now()
+
 type Certificate struct {
 	Status   string
 	Expired  *time.Time
@@ -72,6 +76,19 @@ func (c *Certificates) process_line(line []string) {
 	}
 }
 
+func (c *Certificates) print_expired() {
+	for _, cert := range c.Certificates {
+		if cert.Expired.Before(TIME_NOW) {
+		} else if cert.Expired.Before(TIME_30D) {
+			fmt.Println("Oh Shit")
+		} else if cert.Expired.Before(TIME_90D) {
+			fmt.Println("Shitty Shit!")
+			fmt.Println(cert)
+			fmt.Println(*cert.CN)
+		}
+	}
+}
+
 func main() {
 	file, err := os.Open(FILENAME)
 	if err != nil {
@@ -88,5 +105,5 @@ func main() {
 	for _, line := range lines {
 		cert_store.process_line(line)
 	}
-	fmt.Println(cert_store.Certificates)
+	cert_store.print_expired()
 }

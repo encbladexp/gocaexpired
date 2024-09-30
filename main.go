@@ -3,13 +3,13 @@ package main
 import (
 	"encoding/csv"
 	"errors"
+	"flag"
 	"fmt"
 	"os"
 	"strings"
 	"time"
 )
 
-const FILENAME = "index.txt"
 const TIMEFORMAT_SHORT = "060102150405Z"
 const TIMEFORMAT_LONG = "20060102150405Z"
 
@@ -121,7 +121,9 @@ func (c *Certificates) print_expired() {
 }
 
 func main() {
-	file, err := os.Open(FILENAME)
+	filename := flag.String("filename", "index.txt", "Path to our OpenSSL index file")
+	flag.Parse()
+	file, err := os.Open(*filename)
 	if err != nil {
 		panic(err)
 	}

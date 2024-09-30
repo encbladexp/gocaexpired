@@ -10,6 +10,7 @@ import (
 const FILENAME = "index.txt"
 const TIMEFORMAT_SHORT = "060102150405Z"
 const TIMEFORMAT_LONG = "20060102150405Z"
+
 const (
 	CERT_STATUS = iota
 	CERT_EXPIRED

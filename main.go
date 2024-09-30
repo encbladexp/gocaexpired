@@ -80,12 +80,11 @@ func (c *Certificates) process_line(line []string) {
 func (c *Certificates) print_expired() {
 	for _, cert := range c.Certificates {
 		if cert.Expired.Before(TIME_NOW) {
+			fmt.Println("That certificate is already expired!")
 		} else if cert.Expired.Before(TIME_30D) {
-			fmt.Println("Oh Shit")
+			fmt.Println("This certificate will expire in <= 30d")
 		} else if cert.Expired.Before(TIME_90D) {
-			fmt.Println("Shitty Shit!")
-			fmt.Println(cert)
-			fmt.Println(*cert.CN)
+			fmt.Println("This certificate will expire in <= 90d")
 		}
 	}
 }

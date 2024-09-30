@@ -1,3 +1,3 @@
-module github.com/encbladexp/expired_certificate_check
+module github.com/encbladexp/gocaexpired
 
 go 1.23.1

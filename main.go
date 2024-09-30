@@ -45,6 +45,9 @@ type Certificates struct {
 	Certificates []Certificate
 }
 
+// parse_time parses an OpenSSL index file timestamp. It worries about the
+// two different formats known. It returns a time.Time struct and an
+// error, which is nil in case of success.
 func (c Certificates) parse_time(timestring string) (*time.Time, error) {
 	date, err := time.Parse(TIMEFORMAT_SHORT, timestring)
 	if err == nil {
@@ -57,6 +60,9 @@ func (c Certificates) parse_time(timestring string) (*time.Time, error) {
 	return &date, nil
 }
 
+// process_line parses a line and adds it as a Certificate struct to our
+// internal list of Certificates. It simply panics in case of errors, let's
+// find out in production if this is a great idea ;)
 func (c *Certificates) process_line(line []string) {
 	cert := Certificate{}
 	expired, err := c.parse_time(line[CERT_EXPIRED])
@@ -85,6 +91,8 @@ func (c *Certificates) process_line(line []string) {
 	}
 }
 
+// get_certificate_cn retrieves the certificates CommonName, together with an
+// err in case something went wrong.
 func (c *Certificate) get_certificate_cn() (*string, error) {
 	t := strings.Split(*c.CN, "/")
 	for _, item := range t {
@@ -96,6 +104,9 @@ func (c *Certificate) get_certificate_cn() (*string, error) {
 	return nil, errors.New("No CN found!")
 }
 
+// print_expired iterates over all Certificates stores internally, and prints
+// out helpful information for ones either already expired, or the ones that
+// expire within the next 90 or 30 days.
 func (c *Certificates) print_expired() {
 	for _, cert := range c.Certificates {
 		var cn *string

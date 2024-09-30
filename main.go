@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/csv"
+	"errors"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -18,6 +20,12 @@ const (
 	CERT_SERIAL
 	CERT_FILENAME
 	CERT_CN
+)
+
+const (
+	OUTPUT_EXPIRED     = "CRITICAL: already expired"
+	OUTPUT_EXPIRES_30D = "WARNING: expires in < 30d"
+	OUTPUT_EXPIRES_90D = "INFO: expires in < 90d"
 )
 
 var TIME_90D = time.Now().Add(90 * 24 * time.Hour)
@@ -77,15 +85,38 @@ func (c *Certificates) process_line(line []string) {
 	}
 }
 
+func (c *Certificate) get_certificate_cn() (*string, error) {
+	t := strings.Split(*c.CN, "/")
+	for _, item := range t {
+		if strings.HasPrefix(item, "CN=") {
+			cn := strings.TrimPrefix(item, "CN=")
+			return &cn, nil
+		}
+	}
+	return nil, errors.New("No CN found!")
+}
+
 func (c *Certificates) print_expired() {
 	for _, cert := range c.Certificates {
+		var cn *string
+		var err error
+		var expired string
 		if cert.Expired.Before(TIME_NOW) {
-			fmt.Println("That certificate is already expired!")
+			cn, err = cert.get_certificate_cn()
+			expired = OUTPUT_EXPIRED
 		} else if cert.Expired.Before(TIME_30D) {
-			fmt.Println("This certificate will expire in <= 30d")
+			cn, err = cert.get_certificate_cn()
+			expired = OUTPUT_EXPIRES_30D
 		} else if cert.Expired.Before(TIME_90D) {
-			fmt.Println("This certificate will expire in <= 90d")
+			cn, err = cert.get_certificate_cn()
+			expired = OUTPUT_EXPIRES_90D
+		} else {
+			continue
 		}
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("Expiry Date:", cert.Expired.Format(time.DateOnly), "CN:", *cn, "SN:", *cert.Serial, expired)
 	}
 }
 

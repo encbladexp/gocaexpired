@@ -1,3 +1,8 @@
+# Go CA Expire?
+
+`gocaexpired` is a simple tool to let you know about expired or soon to be expired
+certificates from your internal OpenSSL based (sub?) Certificate Authority.
+
 # Building
 
 ```shell
@@ -10,6 +15,7 @@ Just ensure to have a file called `index.txt` in your current working directory.
 
 ```shell
 ./gocaexpired
+./gocaexpired -filename /path/to/file/name
 ```
 
 # Example

@@ -5,6 +5,17 @@ on:
       - "*"
 
 jobs:
+  create_release:
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ github.ref_name }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - run: |
+          gh release create "$RELEASE_TAG" \
+            --repo="$GITHUB_REPOSITORY" \
+            --title="$RELEASE_TAG" \
+            --generate-notes
   build:
     runs-on: ubuntu-latest
     strategy:
@@ -31,3 +42,10 @@ jobs:
         run: go get .
       - name: Compile
         run: go build -o gocacert-${{ matrix.os }}-${{ matrix.architecture }} -v .
+      - name: Upload to Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "$RELEASE_TAG" \
+            --repo="$GITHUB_REPOSITORY" \
+            gocacert-${{ matrix.os }}-${{ matrix.architecture }}

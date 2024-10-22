@@ -1,0 +1,33 @@
+name: Release
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        architecture:
+          - arm64
+          - amd64
+          - arm
+        os:
+          - linux
+    env:
+      GOARCH: ${{ matrix.architecture }}
+      GOOS: ${{ matrix.os }}
+      RELEASE_TAG: ${{ github.ref_name }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '>=1.22.0'
+      - name: Install dependencies
+        run: go get .
+      - name: Compile
+        run: go build -o gocacert-${{ matrix.os }}-${{ matrix.architecture }} -v .

@@ -94,10 +94,9 @@ func (c *Certificates) process_line(line []string) {
 // get_certificate_cn retrieves the certificates CommonName, together with an
 // err in case something went wrong.
 func (c *Certificate) get_certificate_cn() (*string, error) {
-	t := strings.Split(*c.CN, "/")
-	for _, item := range t {
-		if strings.HasPrefix(item, "CN=") {
-			cn := strings.TrimPrefix(item, "CN=")
+	for item := range strings.SplitSeq(*c.CN, "/") {
+		cn, found := strings.CutPrefix(item, "CN=")
+		if found {
 			return &cn, nil
 		}
 	}

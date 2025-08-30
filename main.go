@@ -100,7 +100,7 @@ func (c *Certificate) get_certificate_cn() (*string, error) {
 			return &cn, nil
 		}
 	}
-	return nil, errors.New("No CN found!")
+	return nil, errors.New("no CN found")
 }
 
 // print_expired iterates over all Certificates stores internally, and prints

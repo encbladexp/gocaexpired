@@ -137,7 +137,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer file.Close()
+	defer func() {
+		err = file.Close()
+		if err != nil {
+			panic(err)
+		}
+	}()
 	csvreader := csv.NewReader(file)
 	csvreader.Comma = '\t'
 	lines, err := csvreader.ReadAll()
